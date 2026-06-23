@@ -42,4 +42,4 @@ jobs:
           push: true
           tags: |
             elhombrelluvia/flask-api:${{ github.sha }}
-            elhombrelluvia/flask-api:latest       
+            elhombrelluvia/flask-api:latest

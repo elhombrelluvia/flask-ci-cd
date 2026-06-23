@@ -17,7 +17,7 @@ COPY requirements.txt .
 # Instalar dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código
+#Copiar el resto del código
 COPY . .
 
 # Cambiar propietario de archivos
