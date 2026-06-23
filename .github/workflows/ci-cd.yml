@@ -41,5 +41,5 @@ jobs:
         with:
           push: true
           tags: |
-            tuusuario/flask-api:${{ github.sha }}
-            tuusuario/flask-api:latest       
+            elhombrelluvia/flask-api:${{ github.sha }}
+            elhombrelluvia/flask-api:latest       
