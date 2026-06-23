@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+ENV/
+
+# Variables de entorno
+.env
+.env.*
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Builds Python
+build/
+dist/
+*.egg-info/
+
+# Docker
+docker-compose.override.yml
+
+# Archivos temporales
+*.tmp
+*.bak

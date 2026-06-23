@@ -1,0 +1,33 @@
+# Imagen ligera
+FROM python:3.11-alpine
+
+# Evita archivos .pyc y mejora logs
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Crear usuario sin privilegios
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Copiar dependencias primero (mejora caché)
+COPY requirements.txt .
+
+# Instalar dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el resto del código
+COPY . .
+
+# Cambiar propietario de archivos
+RUN chown -R appuser:appgroup /app
+
+# Ejecutar como usuario no root
+USER appuser
+
+# Puerto de Flask/Gunicorn
+EXPOSE 8000
+
+# Comando de inicio
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "main:app"]
