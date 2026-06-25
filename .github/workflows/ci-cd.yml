@@ -43,3 +43,23 @@ jobs:
           tags: |
             elhombrelluvia/flask-api:${{ github.sha }}
             elhombrelluvia/flask-api:latest
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull elhombrelluvia/flask-api:latest
+
+            docker stop flask-api || true
+            docker rm flask-api || true
+
+            docker run -d \
+              --name flask-api \
+              -p 8000:8000 \
+              elhombrelluvia/flask-api:latest          
