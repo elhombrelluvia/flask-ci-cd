@@ -54,12 +54,12 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull elhombrelluvia/flask-api:latest
+            sudo docker pull elhombrelluvia/flask-api:latest
 
-            docker stop flask-api || true
-            docker rm flask-api || true
+            sudo docker stop flask-api || true
+            sudo docker rm flask-api || true
 
-            docker run -d \
+            sudo docker run -d \
               --name flask-api \
               -p 8000:8000 \
               elhombrelluvia/flask-api:latest          
