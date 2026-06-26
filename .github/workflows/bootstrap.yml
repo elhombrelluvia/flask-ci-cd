@@ -1,3 +1,33 @@
-on:
+name: Bootstrap EC2
 
+on:
   workflow_dispatch:
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy bootstrap script
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          source: "scripts/bootstrap-ec2.sh"
+          target: "/tmp"
+
+      - name: Execute bootstrap
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          script: |
+            chmod +x /tmp/scripts/bootstrap-ec2.sh
+            /tmp/scripts/bootstrap-ec2.sh
