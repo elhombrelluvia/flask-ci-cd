@@ -41,7 +41,7 @@ git fetch origin main
 git reset --hard origin/main
 
 ########################################
-# Generar .env dinámico (CORRECTO)
+# Generar .env dinámico
 ########################################
 
 echo "Generando .env..."
@@ -57,36 +57,62 @@ IMAGE_TAG=$IMAGE_TAG
 EOF
 
 ########################################
-# Deploy Docker
+# Guardar versión anterior (ROLLBACK BASE)
+########################################
+
+echo "Guardando imagen anterior..."
+docker tag ${DOCKER_USER}/${DOCKER_IMAGE}:latest ${DOCKER_USER}/${DOCKER_IMAGE}:previous || true
+
+########################################
+# Deploy nuevo
 ########################################
 
 echo "Levantando servicios..."
 
 docker compose pull
-echo "DEBUG .env:"
-cat .env || true
-
-if [ -z "$POSTGRES_PASSWORD" ]; then
-  echo "ERROR: POSTGRES_PASSWORD vacío"
-  exit 1
-fi
 docker compose up -d --remove-orphans
 
 ########################################
-# Health check
+# HEALTH CHECK
 ########################################
 
-echo "Verificando API..."
+echo "Ejecutando health check..."
 
 sleep 5
 
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost)
 
-if [ "$HTTP_CODE" -eq 200 ]; then
-    echo "DEPLOY EXITOSO 🚀"
+echo "HTTP CODE: $HTTP_CODE"
+
+########################################
+# ROLLBACK LOGIC
+########################################
+
+if [ "$HTTP_CODE" -ne 200 ]; then
+
+    echo "❌ HEALTH CHECK FALLÓ - INICIANDO ROLLBACK"
+
+    docker compose down
+
+    echo "Revirtiendo a versión anterior..."
+
+    sed -i "s/:${IMAGE_TAG}/:previous/g" .env
+
+    docker compose up -d --remove-orphans
+
+    sleep 5
+
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost)
+
+    if [ "$HTTP_CODE" -eq 200 ]; then
+        echo "✅ ROLLBACK EXITOSO"
+    else
+        echo "💥 ROLLBACK FALLÓ - SISTEMA INESTABLE"
+        exit 1
+    fi
+
 else
-    echo "DEPLOY FALLÓ ❌"
-    exit 1
+    echo "✅ DEPLOY EXITOSO"
 fi
 
 echo "======================================"
