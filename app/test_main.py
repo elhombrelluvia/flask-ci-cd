@@ -1,5 +1,5 @@
 import pytest
-from app.main import app
+from main import app
 
 @pytest.fixture
 def client():
@@ -18,5 +18,6 @@ def test_home_endpoint(client):
 
     assert data == {
         "status": "ok",
-        "code": 200
+        "code": 200,
+        "message": "Hola MUNDO!"
     }
