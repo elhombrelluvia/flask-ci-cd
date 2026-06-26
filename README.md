@@ -3,6 +3,10 @@
 Template de infraestructura CI/CD para APIs Flask sobre AWS EC2, con despliegue automatizado vía GitHub Actions. Incluye Flask + Gunicorn, Nginx como proxy inverso, PostgreSQL y Docker Compose.
 
 ---
+## Diagrama de arquitectura
+
+<img width="2816" height="1536" alt="Gemini_Generated_Image_jwgbjijwgbjijwgb" src="https://github.com/user-attachments/assets/5137baab-e19e-4746-af4a-f9256d5032b8" />
+
 
 ## Arquitectura
 
