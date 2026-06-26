@@ -78,15 +78,14 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-          envs: POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB
-
           script: |
+
+            export POSTGRES_USER="${{ secrets.POSTGRES_USER }}"
+            export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+            export POSTGRES_DB="${{ secrets.POSTGRES_DB }}"
 
             chmod +x /tmp/scripts/deploy.sh
 
-            POSTGRES_USER="${POSTGRES_USER}" \
-            POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
-            POSTGRES_DB="${POSTGRES_DB}" \
             /tmp/scripts/deploy.sh \
               "${{ github.repository }}" \
               "${{ github.sha }}" \

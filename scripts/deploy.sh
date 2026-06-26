@@ -63,6 +63,13 @@ EOF
 echo "Levantando servicios..."
 
 docker compose pull
+echo "DEBUG .env:"
+cat .env || true
+
+if [ -z "$POSTGRES_PASSWORD" ]; then
+  echo "ERROR: POSTGRES_PASSWORD vacío"
+  exit 1
+fi
 docker compose up -d --remove-orphans
 
 ########################################
