@@ -1,5 +1,5 @@
 from flask import Flask,jsonify
-from requests import Response
+from requests import get
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -10,7 +10,7 @@ def home():
     try:
         return jsonify({"status": "ok","code":200,"message":"Hola MUNDO!"})
     except Exception as e:
-        return jsonify({"status":e,"code":Response.status_code}) 
+        return jsonify({"status": "error", "message": str(e)}), 500
 # Run the local development server
 if __name__ == '__main__':
     app.run(debug=True)

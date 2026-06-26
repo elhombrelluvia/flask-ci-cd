@@ -17,11 +17,7 @@ COPY requirements.txt .
 # Instalar dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-#Copiar el resto del código
-COPY . .
-
-# Cambiar propietario de archivos
-RUN chown -R appuser:appgroup /app
+COPY --chown=appuser:appgroup . .
 
 # Ejecutar como usuario no root
 USER appuser

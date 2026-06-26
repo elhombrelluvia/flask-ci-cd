@@ -52,6 +52,8 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/flask-api:${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME }}/flask-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
 
   deploy:
