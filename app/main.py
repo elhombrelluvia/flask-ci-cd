@@ -8,7 +8,7 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     try:
-        return jsonify({"status": "ok","code":200})
+        return jsonify({"status": "ok","code":200,"message":"Hola MUNDO!"})
     except Exception as e:
         return jsonify({"status":e,"code":Response.status_code}) 
 # Run the local development server
