@@ -4,32 +4,45 @@ on:
   push:
     branches:
       - main
+
 jobs:
+
   test:
     runs-on: ubuntu-latest
+
     steps:
+
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install dependencies
         run: |
           cd app
           pip install -r requirements.txt
+
       - name: Run tests
         run: |
           cd app
           pytest
+
+
   package:
     needs: test
     runs-on: ubuntu-latest
+
     steps:
+
       - uses: actions/checkout@v4
+
       - name: Login DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build image
         uses: docker/build-push-action@v6
         with:
@@ -39,11 +52,16 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/flask-api:${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME }}/flask-api:latest
+
+
   deploy:
     needs: package
     runs-on: ubuntu-latest
+
     steps:
+
       - uses: actions/checkout@v4
+
       - name: Copy deployment scripts
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -52,23 +70,25 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "scripts/"
           target: "/tmp"
+
       - name: Execute deployment
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: GITHUB_SHA,
-                POSTGRES_USER,
-                POSTGRES_PASSWORD,
-                POSTGRES_DB
+
+          envs: POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB
+
           script: |
+
             chmod +x /tmp/scripts/deploy.sh
+
+            POSTGRES_USER="${POSTGRES_USER}" \
+            POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+            POSTGRES_DB="${POSTGRES_DB}" \
             /tmp/scripts/deploy.sh \
               "${{ github.repository }}" \
               "${{ github.sha }}" \
               "${{ secrets.DOCKERHUB_USERNAME }}" \
               "${{ vars.DOCKER_IMAGE }}"
-            export POSTGRES_USER=${POSTGRES_USER}
-            export POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-            export POSTGRES_DB=${POSTGRES_DB}
